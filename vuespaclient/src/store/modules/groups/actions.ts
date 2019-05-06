@@ -1,6 +1,8 @@
 import { ActionTree } from 'vuex';
 import { GroupState, Group } from './state';
 import { RootState } from '@/store/state';
+import { GroupsService } from '@/data/groups/groups-service';
+import { GroupsEndpoint } from '@/data/groups/groups-endpoint';
 
 export const types = {
     LOAD_GROUPS: 'groups/loadGroups',
@@ -9,22 +11,25 @@ export const types = {
     REMOVE_GROUP: 'groups/remove',
 };
 
-export const actions: ActionTree<GroupState, RootState> = {
-    loadGroups({commit}): void {
-      const groups = [
-        { id: 1, name: 'group - 1' },
-        { id: 2, name: 'group - 2' },
-        { id: 3, name: 'group - 3' },
-      ];
+// const groupsService = new GroupsService();
+
+export const makeActions = (groupsEndpoint: GroupsEndpoint): ActionTree<GroupState, RootState> => {
+  return {
+    async loadGroups({commit}): Promise<void> {
+      const groups = await groupsEndpoint.GetAll();
       commit('setGroups', groups);
     },
-    add({commit}, group: Group): void {
-      commit('add', group);
+    async add({commit}, group: Group): Promise<void> {
+      const addedGroup = await groupsEndpoint.add(group);
+      commit('add', addedGroup);
     },
-    update({commit}, group: Group): void {
-      commit('update', group);
+    async update({commit}, group: Group): Promise<void> {
+      const updatedGroup = await groupsEndpoint.update(group);
+      commit('update', updatedGroup);
     },
-    remove({commit}, groupId: number): void {
+    async remove({commit}, groupId: number): Promise<void> {
+      await groupsEndpoint.remove(groupId);
       commit('remove', groupId);
     },
+  };
 };

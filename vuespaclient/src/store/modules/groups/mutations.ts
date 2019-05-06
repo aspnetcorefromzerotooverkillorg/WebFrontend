@@ -1,14 +1,11 @@
 import { MutationTree } from 'vuex';
 import { GroupState, Group } from './state';
 
-let currentId: number = 0;
-
 export const mutations: MutationTree<GroupState> = {
     setGroups(state, groups: Group[]): void {
       state.groups = [...groups];
     },
     add(state, group: Group): void {
-      group.id = ++currentId;
       state.groups = [...state.groups, group];
     },
     update(state, group: Group): void {
